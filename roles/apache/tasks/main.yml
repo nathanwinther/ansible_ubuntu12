@@ -1,0 +1,23 @@
+---
+
+- name: install apache
+  apt: name=apache2 state=latest
+
+- name: mod_rewrite enabled?
+  stat: path=/etc/apache2/mods-enabled/rewrite.load
+  register: st
+
+- name: mod_rewrite
+  command: a2enmod rewrite
+  notify: restart apache
+  when: not st.stat.exists
+
+- name: mod_ssl enabled?
+  stat: path=/etc/apache2/mods-enabled/ssl.load
+  register: st
+
+- name: mod_ssl
+  command: a2enmod ssl
+  notify: restart apache
+  when: not st.stat.exists
+
